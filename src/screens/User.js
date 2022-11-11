@@ -78,7 +78,6 @@ return (
 
         <Routes>
             <Route path="/" element = {<Home SIGNOUT={SignOut} />}  />
-            <Route path="registrationForm" element = {<RegistrationForm email={emails} />} />
             <Route path="PersonalInformation" element = {<PersonalInformation  />} />
             <Route path="playQuiz" element = {<PlayQuiz/>} />
         </Routes>

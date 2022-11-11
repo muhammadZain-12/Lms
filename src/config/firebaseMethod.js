@@ -7,14 +7,14 @@ const auth = getAuth(app)
 
 
 const signUpUser = (obj) => {
-    let {email,password,firstName,lastName} = obj
+    let {email,password} = obj
     console.log(email,password)
  return new Promise ( (resolve,reject)=>
     createUserWithEmailAndPassword(auth, email, password).then((success)=>{
     console.log(success,"success")
     const {user} = success
     if(user.email=="bilal@gmail.com"){
-        const reference = ref(database,`users/${user.uid}`)
+        const reference = ref(database,`students/${user.uid}`)
         obj.isCAdmin = true
         delete obj.password
          set(reference,obj).then(()=>{
@@ -25,19 +25,23 @@ const signUpUser = (obj) => {
          })    
     }
     else{
-        const reference = ref(database,`users/${user.uid}`)
+        
+        const reference = ref(database,`students/${user.uid}`)
+        let a = user.uid.slice(5,10)
+        console.log(a)
+        obj.rollno = a
         delete obj.password
          set(reference,obj).then(()=>{
-             resolve("data is successfully submitted")
+             resolve("You have been registered successfully")
          })
          .catch(()=>{
-             reject("data is successfully submitted")
+             reject("data not found")
          })
     }
     
  })
  .catch((error)=>{
-    console.log(error)
+    alert(error.message)
  })
  )
 }
@@ -49,7 +53,7 @@ const signInUser = (obj) => {
    return new Promise ((resolve,reject)=>
    signInWithEmailAndPassword(auth, email, password).then((success)=>{
     const {user} = success
-    const reference = ref(database,`users/${user.uid}`)
+    const reference = ref(database,`students/${user.uid}`)
     onValue(reference,(e)=>{
         const status = e.exists()
     

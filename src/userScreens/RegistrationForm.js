@@ -2,14 +2,16 @@ import { Box } from "@mui/material"
 import Grid from "@mui/material/Grid"
 import TextField from "@mui/material/TextField"
 import Button from "@mui/material/Button"
+import Typography from "@mui/material/Typography"
 import { useEffect, useState } from "react"
 import app from "../config/FirebaseConfig"
-import { getDatabase,ref,push,set} from "firebase/database";
+import { getDatabase,ref,push,set,onValue} from "firebase/database";
 import BasicSelect from "../components/dropDown"
 import BasicDatePicker from "../components/datePicker"
 import { useNavigate } from "react-router-dom"
-const dataBase = getDatabase(app)
+import { signUpUser } from "../config/firebaseMethod"
 
+const dataBase = getDatabase(app)
 
 const RegistrationForm = (prop) => {
     const[disabled,setDisabled] = useState(false)    
@@ -19,11 +21,14 @@ const RegistrationForm = (prop) => {
     let[rollno,setRollNo] = useState("0")
     const [course, setCourse] = useState(''); 
     const [section,setSection] = useState("")   
+    const [val,setVal] = useState([])
     
 
     let {email} = prop
     
     const [data,setData] = useState({
+        email:"",
+        password:"",
         firstName:"",
         lastName:"",
         course:"",
@@ -36,9 +41,9 @@ const RegistrationForm = (prop) => {
         emergencyContact:"",
         dateOfBirth:"",
         age : "",
+        rollno:"aax",
         registrationDate: "",
         registrationYear:"",
-        rollno:'',
         isFeeSubmited:false,
         isApproved:false,
         isActive:false,
@@ -64,27 +69,17 @@ const Month = ["jan","Feb","Mar","Apr","May","Jun","jul","Aug","Sep","Oct","Nov"
     let registeredYear = Fulldate.getFullYear();
 
 const tranferDatatoDataBase = () => {
-
-    rollno = Number(rollno)
-    rollno = rollno+1
-    console.log(rollno,"rooll")
-    rollno = rollno.toString()
-    console.log(rollno,"roll")
-    setRollNo(rollno)
-   let newRollNo = `0000${rollno}`
-   console.log(newRollNo)
-    const reference = ref(dataBase,`students`)
     data.registrationDate = registeredDate
     data.registrationYear = registeredYear
-    data.rollno = newRollNo
     data.dateOfBirth=DOB
-    data.age  = userAge 
-    data.course = course
-    data.section = section
+    data.age  = userAge
+ 
     setData(data)
-    
     let values = Object.values(data)
-let count = 0
+    
+    
+    let count = 0
+    console.log(values)
     values.forEach((e,i)=>{
         if(e===""){
             count = count+1
@@ -96,23 +91,60 @@ let count = 0
     }
     
     else{
-        push(reference,data)
-        navigate("/user/PersonalInformation",{state:data})
-        setDisabled(true)
+   
+    
+    signUpUser(data).then((success)=>{
+        const user = success
+        console.log(user,"userss")
+    alert(success)
+    
+    console.log(success)
+    
+    setDisabled(true)
+    navigate("/")
+        
+    
+
+
+    }).catch((error)=>{
+        console.log(error)
+    })
+
     }
+
+        
 
     
 }
 
 
+console.log(data,"dataaa")
+
+const getDataFromDb = () => {
+    const reference = ref(dataBase,`courses`)
+    onValue(reference,(e)=>{
+        if(e.exists()){
+        let values = e.val()
+        values = Object.values(values)
+        
+        values = values.map((e,i)=>{
+            return e.courseName
+        })
+        values = new Set(values)
+        values = {...[...values]}
+        setVal(values)
+    }
+    })
+}
+
+
+
+useEffect(()=>{
+        getDataFromDb()
+},[])
 
   let userAge = DOBYear?registeredYear-DOBYear:""
     
-   const idCourse = {
-        id1 : "wd",
-        id2 : "md",
-        id3 : "blch"
-    }
 
     const idSection = {
         id1:"A",
@@ -127,13 +159,24 @@ let count = 0
 
       
       
-<Box sx={{display:"flex",justifyContent:"center",flexDirection:"column"}} >
-        <h1 style={{textAlign:"center"}} >Student Registration Form</h1>
+<Box sx={{backgroundColor:{md:"rgba(100,100,100,0.6)"},display:"flex",justifyContent:"center",flexDirection:"column"}} >
+        
         <Grid container>
                     <Box sx={{display:"flex",justifyContent:"center",width:"100%"}}>            
                         <Grid item md={8} sm={10} xs={12} >
-                <Box sx={{display:"flex",flexDirection:"column",AlignItems:"center",width:"100%"}} >
-                    
+                <Box sx={{backgroundColor:"white",border:"2px solid black",marginTop:5,boxShadow:10,display:"flex",flexDirection:"column",AlignItems:"center",width:"100%"}} >
+                <Box>
+                <Typography variant="h4" sx={{textAlign:"center",marginTop:5}} >Student Registration Form</Typography>
+                <Typography variant="h6" sx={{textAlign:"center"}} >Fill this form will get you registered in our quiz program</Typography>
+                </Box>
+                <Box  sx={{display:"flex",justifyContent:"space-around",width:"100%"}} > 
+                    <Grid item md={4} sm={5} xs={5} >
+                    <TextField required="required" type="email" onChange={(e)=>setData((prev)=>({...prev,email:e.target.value}))} label="Email"   sx={{marginTop:5,width:"100%"}} />
+                    </Grid>
+                    <Grid item md={4} sm={5} xs={5}  >
+                    <TextField type="password" onChange={(e)=>setData((prev)=>({...prev,password:e.target.value}))} label="Password" sx={{marginTop:5,width:"100%"}} />
+                    </Grid> 
+                    </Box>
                     <Box  sx={{display:"flex",justifyContent:"space-around",width:"100%"}} > 
                     <Grid item md={4} sm={5} xs={5} >
                     <TextField required="required" onChange={(e)=>setData((prev)=>({...prev,firstName:e.target.value}))} label="FirstName"   sx={{marginTop:5,width:"100%"}} />
@@ -144,10 +187,10 @@ let count = 0
                     </Box>
                     <Box sx={{display:"flex",justifyContent:"space-around"}} > 
                     <Grid item md={4} sm={5} xs={5}  >
-                    <BasicSelect marginTop={5} age={course} setAge={setCourse} id = {idCourse} status="course"  course1="web Development" course2="Mobile Development" course3="App Development" />
+                    <BasicSelect onChange={(e)=>setData((prev)=>({...prev,course:e}))}   marginTop={5} age={course} setAge={setCourse} id = {val} status="course"  course1="web Development" course2="Mobile Development" course3="App Development" />
                     </Grid>
                     <Grid item md={4} sm={5} xs={5}  >
-                    <BasicSelect marginTop={5} age={section} setAge={setSection} id={idSection} status="section"  course1="A" course2="B" course3="C" sx={{marginTop:5}} />
+                    <BasicSelect onChange={(e)=>setData((prev)=>({...prev,section:e}))} marginTop={5}  id={idSection} status="section"  course1="A" course2="B" course3="C" sx={{marginTop:5}} />
                     </Grid>
                     </Box>
                     <Box sx={{display:"flex",justifyContent:"space-around"}} > 
@@ -182,8 +225,13 @@ let count = 0
                     <TextField  onChange={(e)=>setData((prev)=>({...prev,age:e.target.value}))} label="Age" value={userAge} sx={{marginTop:5,width:"100%"}} />
                     </Grid>
                     </Box>
-                    <Box sx={{display:"flex",justifyContent:"center"}}>
-                        <Button onClick={tranferDatatoDataBase}  variant="contained" sx={{marginTop:5,marginBottom:5,padding:2}} >Register Student</Button>
+                    <Box sx={{display:"flex",flexDirection:"row",justifyContent:"center"}}>
+                    <Button onClick={tranferDatatoDataBase}  variant="contained" sx={{width:"30%",marginTop:5,marginBottom:5,padding:2}} >Register Student</Button>
+                    </Box>
+                    <Box sx={{display:"flex",width:"100%",marginBottom:5,flexDirection:"row",justifyContent:"center"}} >
+                    <Button onClick={()=>navigate("/")} sx={{width:"30%",border:"1px solid blue",padding:1,color:"blue"}}   variant="standard">Back to Login</Button>
+                    
+
                     </Box>
                    
                    

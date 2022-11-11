@@ -20,8 +20,9 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
+import '../App.css';
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -70,6 +71,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function PersistentDrawerLeft(prop) {
 
+const navigate = useNavigate()
+
+  const {signOut} = prop
   // const navigate = useNavigate()
   
   const theme = useTheme();
@@ -83,11 +87,67 @@ export default function PersistentDrawerLeft(prop) {
     setOpen(false);
   };
 
+
+
+  let menuLinks = [
+    {
+      displayName:"Home",
+      routeName:"/Cadmin"
+    },
+    {
+      displayName:"Student Data",
+      routeName:"StudentData"
+    },
+    {
+      displayName:"Create Quiz",
+      routeName:"createQuiz"
+    },
+    {
+      displayName:"Quiz Data",
+      routeName:"quizData"
+    },
+    {
+      displayName:"Course Form",
+      routeName:"courseForm"
+    },
+    {
+      displayName:"Course Form Data",
+      routeName:"courseFormData"
+    },
+    {
+      displayName:"Result Screen",
+      routeName:"resultScreen"
+    },
+    {
+      displayName:"Countries",
+      routeName:"countries"
+    },
+    {
+      displayName:"Cities",
+      routeName:"city"
+    },
+    {
+      displayName:"Form Control",
+      routeName:"formControl"
+    },
+    {
+      displayName:"Form Control Data",
+      routeName:"formControlData"
+    },
+    
+  ]
+
+
+const routePage = (path) => {
+  setOpen(false)
+  navigate(path)
+}
+
   return (
     <Box sx={{ display: 'flex',height:"10vh" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar sx={{display:"flex",justifyContent:"space-between"}} >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -97,10 +157,12 @@ export default function PersistentDrawerLeft(prop) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h4" noWrap component="div">
             {prop.status}
           </Typography>
+          <Button onClick={signOut} id="signOut" variant="contained" sx={{display:{sm:"flex",md:"flex",xs:"none"},color:"blue",backgroundColor:"white",width:{md:"15%",sm:"20%"},fontSize:16,fontWeight:600}} >Sign Out </Button>
         </Toolbar>
+        
       </AppBar>
       <Drawer
         sx={{
@@ -121,23 +183,42 @@ export default function PersistentDrawerLeft(prop) {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        
-        <Divider />
+       
         {prop.status=="Admin Panel"?
-        <Box sx={{display:"flex",alignItems:"center",flexDirection:"column"}} >
-        <Link to="/Cadmin" > <Button sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Home</Button></Link>
-          <Link  style={{color:"black",textDecoration:"none"}} to="userData" ><Button  sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >User Data</Button></Link>
-          <Link  style={{color:"black",textDecoration:"none"}} to="StudentData" ><Button sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Student Data</Button></Link>
-          <Link  style={{color:"black",textDecoration:"none"}} to="createQuiz" ><Button sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >CreateQuiz</Button></Link>
-          <Link  style={{color:"black",textDecoration:"none"}} to="quizData" ><Button sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Quiz Data</Button></Link> 
-          </Box>:<Box sx={{display:"flex",alignItems:"center",flexDirection:"column"}} >
+        <List>
+          {menuLinks.map((text, index) => (
+            <ListItem key={index} disablePadding>
+              <ListItemButton onClick={()=>{routePage(text.routeName)}} >
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text.displayName} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>:
+        
+        
+       <Box>
+
+          <Box sx={{display:"flex",alignItems:"center",flexDirection:"column"}} >
         <Link style={{textDecoration:"none",marginTop:5}} to={prop.path} > <Button   sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Home</Button></Link>
           <Link  style={{color:"black",textDecoration:"none",marginTop:5}} to="RegistrationForm" ><Button  sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Registration Form</Button></Link>
           <Link  style={{color:"black",textDecoration:"none",marginTop:5}} to="PersonalInformation" ><Button  sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Personal Data</Button></Link>
           <Link  style={{color:"black",textDecoration:"none",marginTop:5}} to="playQuiz" ><Button  sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Play Quiz</Button></Link>
-          </Box>}
+          </Box>
         
-        <Box/>
+        
+        </Box>}
+
+          <List>
+            <ListItem sx={{display:"flex",justifyContent:"center"}} >
+
+              <Link sx={{textDecoration:"none"}}  to="/" > <Button sx={{display:{xs:"flex",md:"none",sm:"none"},border:"1px solid blue",width:"100%"}}  >Sign Out</Button></Link>
+              
+            </ListItem>
+          </List>
+
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
