@@ -21,44 +21,126 @@ function TrainerRegistrationForm () {
         otherQualification:[],
         contactNumber:"",
         coursesAllowed:[],
+        country:"",
+        city:""
     }
 
     const [data,setData] = useState(initialData)
-    const [courses,setCourses ] = useState([])
+    const [courses,setCourses ] = useState()
     const [qualification,setQualification] = useState("")
+    const [countryNames,setCountryNames] = useState({})
+    const [cityNames,setCityNames] = useState({})
+    const [cityData,setCityData] = useState([])
+    const [cities,setCities] = useState({})
+
 
 const getCoursesDataFromDb = () => {
+
+    if(cities){
+        
     const reference = ref(database,`formControl`)
     onValue(reference,(e)=>{
         if(e.exists()){
             let val = e.val()
             let values = Object.values(val)
-            let courses = [];
+
             values.map((e,i)=>{
+               
+                let courses = [];
+                
                 if(e.isFormOpen){
-                    courses.push(e.course)
-                }
-            })
-            let categories = new Set(courses)
-            categories = [...categories]
-            setCourses(categories)          
-        }
-    })
+                values.map((x)=>{
+                    x.cityName.map((value)=>{
+                        if(value==data.city&&x.isFormOpen=="open"){
+                            courses.push(x.course)
+                        }
+                    })
+                    
+                })
+
+            }    
+            courses = new Set(courses)
+            courses = [...courses]
+            
+            setCourses(courses)    
+        })
+
+        
+        // let categories = new Set(courses)
+        // categories = [...categories]
+        // setCourses(categories)          
+    }
+})
+}
+
 }
 
 
 
+const getCityDataFromDb = () => {
+    const reference = ref(database,`cities`)
+    onValue(reference,(e)=>{
+        if(e.exists()){
+            let val = e.val()
+            let values = Object.values(val)
+            setCityData(values)
+            let country = []
+            values.map((e,i)=>{
+                country.push(e.countryName)    
+            })
+                country = new Set(country)
+                country = {...[...country]}
+                setCountryNames(country)
+
+            let city = []
+
+           
+            
+                    }
+    })
+}
+const getFilteredCityData = () =>{
+    data.country&&data.country.length>0&&
+    setCityNames(cityData.filter((e,i)=>{
+        return e.countryName == data.country
+}))
+
+}
+
+const getCities = () =>{
+    let city = []
+    cityNames&&cityNames.length>0&& 
+    cityNames.map((e,i)=>{
+        return city.push(e.cityName)
+    })
+    city = new Set(city)
+    city = {...[...city]}
+    setCities(city)
+    
+}
 
 useEffect(()=>{
     getCoursesDataFromDb()
+},[cities])
+
+useEffect(()=>{
+    
+    getCityDataFromDb()
 },[])
+
+useEffect(()=>{
+        getFilteredCityData()
+},[data])
+useEffect(()=>{
+    getCities()
+},[cityNames])
 
 
 const getQualificationFromTrainer = () => {
     setData({...data,otherQualification:[...data.otherQualification,qualification]})
     setQualification("")
 }
-console.log(data,"data")
+
 
 const deleteQualification = (ind) => {
     
@@ -68,7 +150,7 @@ const deleteQualification = (ind) => {
     
 })}
 
-console.log(data,"data")
+
 
 const showOtherQualification = data.otherQualification&&data.otherQualification.map((e,i)=>{
     return (
@@ -80,21 +162,43 @@ const showOtherQualification = data.otherQualification&&data.otherQualification.
 })
 
 const submitTrainerInDb = () => {
+
+    let values = Object.values(data)
+    let flag = values.some((e)=>{
+        if(e==""||e==[]){
+            return e
+
+        }
+        
+        
+    }
+    )
+    if(flag){
+        alert("Fill All Inputs")
+    }
+    else{
+        
     const reference = ref(database,`trainers`)
     push(reference,data).then(()=>{
         alert("Your Data Has been Successfully Submitted")
         setData(initialData)
+
     }).catch(()=>{
         alert("Your Data Not Found")
     })
+    }
+
 }
+
+
+
 
 
 
     return (
         <Box>
           <Grid sx={{ display: "flex", justifyContent: "center",backgroundColor:"#125491",maxHeight:"fit-Content",minHeight:"100vh" }} container>
-            <Grid item md={6}>
+            <Grid item md={7}>
               <Box
                 sx={{
                   backgroundColor:"white",
@@ -129,6 +233,12 @@ const submitTrainerInDb = () => {
                         <TextField value={data.lastName} variant="standard" label="Last Name" onChange={(e)=>setData({...data,lastName:e.target.value})} fullWidth />
                     </Box>
                     <Box sx={{width:"45%",mt:5}} >
+                <BasicSelect value={data.country} id={countryNames} status="Country Name" onChange={(e)=>setData({...data,country:e})}   />
+                    </Box>
+                    <Box sx={{width:"45%",mt:5}} >
+                <BasicSelect value={data.city} id={cities} status="City Name" onChange={(e)=>setData({...data,city:e})}   />
+                    </Box>
+                    <Box sx={{width:"45%",mt:5}} >
                         <TextField value={data.cnic} variant="standard" label="Cnic Number" onChange={(e)=>setData({...data,cnic:e.target.value})} fullWidth />
                     </Box>
                     <Box sx={{width:"45%",mt:5}} >
@@ -149,6 +259,7 @@ const submitTrainerInDb = () => {
                     <Box sx={{width:"45%",mt:5}} >
                 <MultipleSelect value={data.coursesAllowed} id={courses} status="Apply For Courses" onChange={(e)=>setData({...data,coursesAllowed:e})}   />
                     </Box>
+                 
                     <Box sx={{display:"flex",justifyContent:"center",width:"100%",mt:5}} >
                         <Button onClick={submitTrainerInDb} sx={{width:"50%",padding:1.2}} variant="contained" >
                             Submit Form

@@ -22,7 +22,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import '../App.css';
 
-const drawerWidth = 300;
+const drawerWidth = 250;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -134,8 +134,38 @@ const navigate = useNavigate()
       displayName:"Form Control Data",
       routeName:"formControlData"
     },
+    {
+      displayName:"Trainer Registration",
+      routeName:"trainerRegistrationForm"
+    },
+    {
+      displayName:"Trainer Data",
+      routeName:"trainerData"
+    },
     
   ]
+
+
+  const userLinks = [
+    {
+      displayName:"Home",
+      routeName:"/user"
+    },
+    {
+      displayName:"Student Profile",
+      routeName:"studentProfile"
+    },
+    {
+      displayName:"Play Quiz",
+      routeName:"playQuiz"
+    },
+    {
+      displayName:"Result",
+      routeName:"result"
+    },
+    
+  ]
+
 
 
 const routePage = (path) => {
@@ -144,7 +174,7 @@ const routePage = (path) => {
 }
 
   return (
-    <Box sx={{ display: 'flex',height:"10vh" }}>
+    <Box sx={{ display: 'flex',height:"6vh"}}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar sx={{display:"flex",justifyContent:"space-between"}} >
@@ -199,26 +229,27 @@ const routePage = (path) => {
         </List>:
         
         
-       <Box>
-
-          <Box sx={{display:"flex",alignItems:"center",flexDirection:"column"}} >
-        <Link style={{textDecoration:"none",marginTop:5}} to={prop.path} > <Button   sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Home</Button></Link>
-          <Link  style={{color:"black",textDecoration:"none",marginTop:5}} to="RegistrationForm" ><Button  sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Registration Form</Button></Link>
-          <Link  style={{color:"black",textDecoration:"none",marginTop:5}} to="PersonalInformation" ><Button  sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Personal Data</Button></Link>
-          <Link  style={{color:"black",textDecoration:"none",marginTop:5}} to="playQuiz" ><Button  sx={{color:"black",fontSize:20,fontFamily:"monospace"}} >Play Quiz</Button></Link>
-          </Box>
         
-        
-        </Box>}
-
-          <List>
-            <ListItem sx={{display:"flex",justifyContent:"center"}} >
-
-              <Link sx={{textDecoration:"none"}}  to="/" > <Button sx={{display:{xs:"flex",md:"none",sm:"none"},border:"1px solid blue",width:"100%"}}  >Sign Out</Button></Link>
-              
+        <List>
+          {userLinks.map((text, index) => (
+            <ListItem key={index} disablePadding>
+              <ListItemButton onClick={()=>{routePage(text.routeName)}} >
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text.displayName} />
+              </ListItemButton>
             </ListItem>
-          </List>
+          ))}
 
+          <ListItem sx={{display:{md:"none",sm:"none",xs:"flex"}}} >
+        <ListItemIcon>
+                 <MailIcon />
+                </ListItemIcon>
+          <ListItemText onClick={signOut} sx={{display:{md:"none",xs:"block",sm:"none"}}} >Sign Out</ListItemText>
+</ListItem>
+        </List>
+}
       </Drawer>
       <Main open={open}>
         <DrawerHeader />

@@ -26,11 +26,11 @@ function Login () {
             if(user.isCAdmin){
                 navigate("Cadmin",{state:user})    
             }
-            else if (user.isActive){
-            navigate("user",{state:user})
-        }
+        //     else if (user.isActive){
+        //     navigate("user",{state:user})
+        // }
         else{
-            alert("Your email Id is not activated Yet")
+            navigate("user",{state:user})
         }
         }).catch((error)=>{
             setLoader(false)
@@ -62,8 +62,8 @@ function Login () {
                 <TextField onChange={(e)=>setData((prev)=>({...prev,email:e.target.value}))} sx={{width:"100%",marginTop:3,borderRadius:"10px"}} type="email" label="Email" variant="standard" />
                 <TextField onChange={(e)=>setData((prev)=>({...prev,password:e.target.value}))} sx={{width:"100%",marginTop:3}} type="password" label="Password" variant="standard" />
                <Link onClick={loginButton} style={{marginTop:20,width:"100%",padding:1,textDecoration:"none",display:"flex",justifyContent:"center",border:"none"}} > <Button disabled={loading} sx={{width:"50%"}}  variant="contained"  >{loading?<CircularProgress/>:"Login"}</Button></Link>
-               <Link to="registrationForm" style={{marginTop:10,width:"100%",padding:1,textDecoration:"none",display:"flex",justifyContent:"center"}} > <Button sx={{width:"70%",fontSize:16,border:"1px solid blue",marginTop:1,display:{md:"flex",sm:"flex",xs:"none"}}} variant="standard"   >Get me Registered</Button></Link>
-               <Link to="registrationForm" style={{marginTop:10,width:"100%",padding:1,textDecoration:"none",justifyContent:"center",display:"flex"}} > <Button sx={{width:{xs:"70%"},fontSize:16,display:{md:"none",sm:"none",xs:"flex"},border:"1px solid blue"}} variant="standard"   >Register Me</Button></Link>             
+               {/* <Link to="registrationForm" style={{marginTop:10,width:"100%",padding:1,textDecoration:"none",display:"flex",justifyContent:"center"}} > <Button sx={{width:"70%",fontSize:16,border:"1px solid blue",marginTop:1,display:{md:"flex",sm:"flex",xs:"none"}}} variant="standard"   >Get me Registered</Button></Link>
+               <Link to="registrationForm" style={{marginTop:10,width:"100%",padding:1,textDecoration:"none",justifyContent:"center",display:"flex"}} > <Button sx={{width:{xs:"70%"},fontSize:16,display:{md:"none",sm:"none",xs:"flex"},border:"1px solid blue"}} variant="standard"   >Register Me</Button></Link>              */}
                 
                 
                 </Box>

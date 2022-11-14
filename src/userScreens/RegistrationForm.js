@@ -31,6 +31,8 @@ const RegistrationForm = (prop) => {
         password:"",
         firstName:"",
         lastName:"",
+        country:"",
+        city:"",
         course:"",
         section:"",
         contact:"",
@@ -184,6 +186,14 @@ useEffect(()=>{
                     <Grid item md={4} sm={5} xs={5}  >
                     <TextField type="text" onChange={(e)=>setData((prev)=>({...prev,lastName:e.target.value}))} label="LastName" sx={{marginTop:5,width:"100%"}} />
                     </Grid> 
+                    </Box>
+                    <Box sx={{display:"flex",justifyContent:"space-around"}} > 
+                    <Grid item md={4} sm={5} xs={5}  >
+                    <BasicSelect onChange={(e)=>setData((prev)=>({...prev,course:e}))}   marginTop={5} age={course} setAge={setCourse} id = {val} status="course"  course1="web Development" course2="Mobile Development" course3="App Development" />
+                    </Grid>
+                    <Grid item md={4} sm={5} xs={5}  >
+                    <BasicSelect onChange={(e)=>setData((prev)=>({...prev,section:e}))} marginTop={5}  id={idSection} status="section"  course1="A" course2="B" course3="C" sx={{marginTop:5}} />
+                    </Grid>
                     </Box>
                     <Box sx={{display:"flex",justifyContent:"space-around"}} > 
                     <Grid item md={4} sm={5} xs={5}  >

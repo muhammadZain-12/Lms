@@ -10,6 +10,8 @@ import RegistrationForm from "../userScreens/RegistrationForm";
 import PersonalInformation from "./PersonalInformation";
 import { getDatabase } from "firebase/database";
 import PlayQuiz from "../userScreens/playQuiz";
+import StudentProfile from "./StudentProfile";
+import Result from "./result";
 
 
 const auth = getAuth(app)
@@ -22,20 +24,21 @@ function UserScreen () {
     const location = useLocation()
     const navigate = useNavigate()
     const [emails,setEmails] = useState("")
-    
+    const [data,setData] = useState([])
     
 
 const checkingUser = () => {
     onAuthStateChanged(auth,(user)=>{
-      
+        
         
         if(user){
             getData(user)
             setUser(true)
+            setData(user)
         }
         else{
 
-            navigate("/")
+            navigate("/",{state:user})
             console.log("a")
         }
     })
@@ -58,6 +61,7 @@ const getData = (data) => {
     const SignOut = () => {
         signOut(auth).then(() => {
             console.log("sign Out")
+            
             // Sign-out successful.
           }).catch((error) => {
             // An error happened.
@@ -73,13 +77,14 @@ const getData = (data) => {
 return (
     <div>
         
-            <PersistentDrawerLeft path="/user" status="User Panel" />  
+            <PersistentDrawerLeft path="/user" signOut={SignOut} status="User Panel" />  
         
 
         <Routes>
-            <Route path="/" element = {<Home SIGNOUT={SignOut} />}  />
-            <Route path="PersonalInformation" element = {<PersonalInformation  />} />
+            <Route path="/" element = {<Home  />}  />
+            <Route path="studentProfile" element = {<StudentProfile data={data} />} />
             <Route path="playQuiz" element = {<PlayQuiz/>} />
+            <Route path="result" element = {<Result/>} />
         </Routes>
         </div>
 )

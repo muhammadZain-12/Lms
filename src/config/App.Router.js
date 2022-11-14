@@ -9,6 +9,7 @@ import { UserDetail } from "../screens/userDetail"
 import RegistrationForm from "../userScreens/RegistrationForm"
 import Result from "../screens/result"
 import TrainerRegistrationForm from "../screens/trainerRegistrationForm"
+import StudentProfile from "../screens/StudentProfile"
 
 function AppRouter () {
     
@@ -27,7 +28,7 @@ function AppRouter () {
                     <Route path="user/*" element={<UserScreen/>} />
                     <Route path="Cadmin/*" element={<Admin/>} />
                     <Route path="userDetail" element={<UserDetail/>} />
-                    <Route path="trainerRegistrationForm" element={<TrainerRegistrationForm/>} />
+                    <Route path="studentProfile" element={<StudentProfile/>} />
                     
                 </Routes>
             </Router>

@@ -31,10 +31,10 @@ function getStyles(name, personName, theme) {
 export default function MultipleSelect(prop) {
 
     const {status,id,onChange,value} = prop
-
+    
     let cityName = []
     id&&id.map((e,i)=>{
-        console.log(e)
+        
         cityName.push(e.cityName?e.cityName:e)      
     })
 

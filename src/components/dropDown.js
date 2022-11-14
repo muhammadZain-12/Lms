@@ -23,7 +23,7 @@ export default function BasicSelect(prop) {
   const handleChange = (event) => {
     onChange(event.target.value);
   };
-console.log(value,"value")
+
   return (
     <Box sx={{ minWidth: 120, width: width }}>
       <FormControl sx={{ marginTop: marginTop }} fullWidth>

@@ -20,6 +20,7 @@ import Cities from "./cities";
 import FormControl from "./formControl";
 import FormControlData from "./formControlData";
 import TrainerRegistrationForm from "./trainerRegistrationForm";
+import TrainerData from "./TrainersData";
 const auth = getAuth(app)
 
 
@@ -88,6 +89,9 @@ const SignOut = () => {
             <Route path="city" element={<Cities/>} />
             <Route path="formControl" element={<FormControl/>} />
             <Route path="formControlData" element={<FormControlData/>} />
+            <Route path="trainerRegistrationForm" element={<TrainerRegistrationForm/>} />
+            <Route path="trainerData" element={<TrainerData/>} />
+            
             
         </Routes>
           
